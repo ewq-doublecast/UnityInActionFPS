@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class WanderingAI : MonoBehaviour
 {
+    private const float BaseSpeed = 3.0f;
+
     [SerializeField]
-    private float _speed = 3.0f;
+    private float _speed = BaseSpeed;
 
     [SerializeField]
     private float _obstacleRange = 5.0f;
@@ -12,7 +14,18 @@ public class WanderingAI : MonoBehaviour
     private GameObject _fireballPrefab;
 
     private bool _isAlive;
+
     private GameObject _fireball;
+
+    private void Awake()
+    {
+        Messenger<float>.AddListener(GameEvent.SpeedChanged, OnSpeedChaged);
+    }
+
+    private void OnDestroy()
+    {
+        Messenger<float>.RemoveListener(GameEvent.SpeedChanged, OnSpeedChaged);
+    }
 
     private void Start()
     {
@@ -53,5 +66,15 @@ public class WanderingAI : MonoBehaviour
     public void SetIsAlive(bool isAlive)
     {
         _isAlive = isAlive;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
+
+    private void OnSpeedChaged(float value)
+    {
+        _speed = BaseSpeed * value;
     }
 }
