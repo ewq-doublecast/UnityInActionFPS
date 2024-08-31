@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Camera))]
 public class RayShooter : MonoBehaviour
@@ -12,14 +12,11 @@ public class RayShooter : MonoBehaviour
     private void Start()
     {
         _camera = GetComponent<Camera>();
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             Vector3 point = new Vector3(_camera.pixelWidth / 2, _camera.pixelHeight / 2, 0);
 
@@ -34,6 +31,8 @@ public class RayShooter : MonoBehaviour
                 if (reactiveTarget != null)
                 {
                     reactiveTarget.ReactToHit();
+
+                    Messenger.Broadcast(GameEvent.EnemyHit);
                 }
                 else
                 {
